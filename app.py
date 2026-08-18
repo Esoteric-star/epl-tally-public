@@ -8,7 +8,7 @@ from zoneinfo import ZoneInfo
 from flask import Flask, abort, flash, redirect, render_template, request, session, url_for
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from db import CURRENT_SEASON, get_conn
+from db import CURRENT_SEASON, DB_PATH, PROD_DB_PATH, get_conn
 from players import avatar_file, get_player, parse_utc
 from settle import score
 from stats import head_to_head, team_form, team_upcoming
@@ -19,6 +19,15 @@ DEMO_MODE = os.environ.get("DEMO_MODE", "").lower() in ("1", "true", "yes")
 # real club crests (e.g. for a screenshot that wants them) while keeping
 # the wordmark, avatars, and competition badges as placeholders.
 DEMO_SHOW_CRESTS = os.environ.get("DEMO_SHOW_CRESTS", "").lower() in ("1", "true", "yes")
+
+# DEMO_MODE disables the passcode gate; refuse to boot rather than serve the
+# live database with the gate off because DATABASE_PATH was left unset (or
+# was pointed at epl.db) by mistake.
+if DEMO_MODE and DB_PATH.resolve() == PROD_DB_PATH.resolve():
+    raise SystemExit(
+        "DEMO_MODE is on but DATABASE_PATH resolves to epl.db -- refusing to "
+        "start. Set DATABASE_PATH to a separate file, e.g. DATABASE_PATH=demo.db."
+    )
 
 APP_PASSCODE = os.environ["APP_PASSCODE"]
 FLASK_SECRET_KEY = os.environ["FLASK_SECRET_KEY"]

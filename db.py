@@ -8,8 +8,9 @@ REPO_ROOT = Path(__file__).resolve().parent
 # SQLite file without touching epl.db. Relative paths resolve against the
 # repo root, not the process cwd, so behaviour doesn't depend on where the
 # app is launched from. Unset (the production default) keeps epl.db.
+PROD_DB_PATH = REPO_ROOT / "epl.db"
 _database_path_env = os.environ.get("DATABASE_PATH")
-DB_PATH = (REPO_ROOT / _database_path_env) if _database_path_env else (REPO_ROOT / "epl.db")
+DB_PATH = (REPO_ROOT / _database_path_env) if _database_path_env else PROD_DB_PATH
 
 # Season label backfilled onto every existing row that predates the
 # `season` column. Update this once a year when the fixture list rolls
