@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% from "_macros.html" import fixture_list %}
+{% block body %}
+{% set active = 'mine' %}
+{% include "_topbar.html" %}
+
+<div class="page">
+  <h2 class="section-h">{{ me }}'s predictions</h2>
+  <p class="section-sub">
+    {% if missing %}{{ missing }} fixture{{ '' if missing == 1 else 's' }} without a prediction.
+    {% else %}All {{ fixtures|length }} fixtures predicted.{% endif %}
+  </p>
+
+  <div class="mdstrip">
+    {% for s in strip %}
+    <a class="mdpill" href="{{ url_for('mine', matchday=s.md) }}" aria-pressed="{{ 'true' if s.md == matchday else 'false' }}">
+      Matchday {{ s.md }}<small>{{ 'Closed' if s.open == 0 else s.open ~ ' open' }}</small>
+    </a>
+    {% endfor %}
+  </div>
+
+  {% if settled %}
+  <div class="key" style="margin-bottom:14px">
+    <div class="key__cell"><div class="key__n">{{ earned }}</div><span class="key__t">Points</span></div>
+    <div class="key__cell"><div class="key__n key__n--3">{{ exact }}</div><span class="key__t">Exact scores</span></div>
+    <div class="key__cell"><div class="key__n">{{ settled }}/{{ fixtures|length }}</div><span class="key__t">Settled</span></div>
+  </div>
+  {% endif %}
+
+  {% if any_activity %}
+    {{ fixture_list(fixtures, false) }}
+  {% else %}
+  <div class="empty"><b>No predictions yet</b>Matchday {{ matchday }} is still open. Head to Predict to fill it in.</div>
+  {% endif %}
+</div>
+
+{% include "_nav.html" %}
+{% endblock %}

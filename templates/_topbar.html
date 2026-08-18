@@ -1,0 +1,7 @@
+{% from "_macros.html" import player_avatar %}
+<header class="topbar">
+  <span class="brand"><span class="brand__tag">PL</span><span class="brand__word">Predictor</span></span>
+  <a class="topbar__you" href="{{ url_for('who') }}">
+    {{ player_avatar(me) }}<span>{{ me or '—' }}</span>
+  </a>
+</header>

@@ -1,0 +1,5 @@
+<nav class="nav">
+  <a class="nav__btn" href="{{ url_for('predict') }}" {% if active=='predict' %}aria-current="page"{% endif %}><svg><use href="#i-pen"/></svg>Predict</a>
+  <a class="nav__btn" href="{{ url_for('mine') }}" {% if active=='mine' %}aria-current="page"{% endif %}><svg><use href="#i-list"/></svg>My picks</a>
+  <a class="nav__btn" href="{{ url_for('table') }}" {% if active=='table' %}aria-current="page"{% endif %}><svg><use href="#i-cup"/></svg>Table</a>
+</nav>

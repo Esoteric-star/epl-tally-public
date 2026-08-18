@@ -1,0 +1,132 @@
+{% macro player_avatar(name) -%}
+{% if name and avatar_file(name) %}
+<img class="avatar" src="{{ url_for('static', filename='avatars/' ~ avatar_file(name)) }}" alt="{{ name }}">
+{% else %}
+<span class="avatar">{{ (name[:2] if name else '--')|upper }}</span>
+{% endif %}
+{%- endmacro %}
+
+{% macro badge(side) -%}
+{% if side.badge_file %}
+<img class="badge" src="{{ url_for('static', filename='badges/' ~ side.badge_file) }}" alt="{{ side.name }}">
+{% else %}
+<span class="badge" style="color:{{ side.colour }};background:{{ side.colour }}18">{{ side.code }}</span>
+{% endif %}
+{%- endmacro %}
+
+{% macro team_link(side) -%}
+<a class="team__link" href="{{ url_for('team_page', code=side.code|lower) }}">
+  {{ badge(side) }}
+  <span class="team__name {{ 'team__name--lose' if side.lose else '' }}">{{ side.name }}</span>
+</a>
+{%- endmacro %}
+
+{% macro comp_badge(comp) -%}
+{% if comp.badge_file %}
+<img class="compbadge" src="{{ url_for('static', filename='comp_badges/' ~ comp.badge_file) }}" alt="{{ comp.name }}" title="{{ comp.name }}">
+{% else %}
+<span class="compbadge compbadge--text" title="{{ comp.name }}">{{ comp.code }}</span>
+{% endif %}
+{%- endmacro %}
+
+{% macro form_pill(m) -%}
+<span class="formitem">
+  <i class="formpill formpill--{{ m.result|lower }}">{{ m.result }}</i>
+  {{ comp_badge(m.comp) }}
+</span>
+{%- endmacro %}
+
+{% macro stats_toggle(f) %}
+<button type="button" class="fx__statstoggle" data-panel="stats-{{ f.id }}" aria-expanded="false" aria-controls="stats-{{ f.id }}">
+  <span>Form &amp; head-to-head</span>
+  <svg class="chev" aria-hidden="true"><use href="#i-chev"/></svg>
+</button>
+<div class="fx__statspanel" id="stats-{{ f.id }}" hidden>
+  <div class="statsteam">
+    <span class="statsteam__name">{{ f.home.name }}</span>
+    <span class="formstrip">
+      {% for m in f.stats.home_form|reverse %}{{ form_pill(m) }}{% endfor %}
+      {% if not f.stats.home_form %}<span class="statsempty">No results yet</span>{% endif %}
+    </span>
+  </div>
+  <div class="statsteam">
+    <span class="statsteam__name">{{ f.away.name }}</span>
+    <span class="formstrip">
+      {% for m in f.stats.away_form|reverse %}{{ form_pill(m) }}{% endfor %}
+      {% if not f.stats.away_form %}<span class="statsempty">No results yet</span>{% endif %}
+    </span>
+  </div>
+  <div class="statsh2h">
+    <div class="statsh2h__label">Head-to-head</div>
+    {% if f.stats.h2h %}
+      {% for m in f.stats.h2h %}
+      <div class="statsh2h__row">
+        <span>{{ m.season }}</span>
+        <span>{{ m.home_short }} {{ m.home_score }}&ndash;{{ m.away_score }} {{ m.away_short }}</span>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="statsh2h__empty">No previous meetings on record.</p>
+    {% endif %}
+  </div>
+  <p class="statskickoff">Kickoff: {{ f.stats.kickoff_display }}</p>
+</div>
+{% endmacro %}
+
+{% macro readonly_fixture(f) %}
+<article class="fx {{ 'fx--locked' if f.locked else '' }}">
+  <div class="fx__top"><span class="fx__ko">{{ f.time }}</span><span class="tag {{ f.tag.cls }}">{{ f.tag.text }}</span></div>
+  <div class="fx__body">
+    <div class="collabel"><span>You</span><span>{{ 'FT' if f.status == 'FINISHED' else 'Live' if f.status == 'IN_PLAY' else 'Result' }}</span></div>
+    {% for side in (f.home, f.away) %}
+    <div class="team">
+      {{ team_link(side) }}
+      <span class="readout">
+        <span class="cell {{ 'cell--you' if side.pred is not none else 'cell--none' }}">{{ side.pred if side.pred is not none else '–' }}</span>
+        {% if side.actual is not none %}
+        <span class="cell {{ 'cell--hit' if side.hit else 'cell--ft' }}">{{ side.actual }}</span>
+        {% else %}
+        <span class="cell cell--pending">–</span>
+        {% endif %}
+      </span>
+    </div>
+    {% endfor %}
+  </div>
+  {% if f.foot %}<div class="fx__foot"><svg><use href="#i-lock"/></svg>{{ f.foot }}</div>{% endif %}
+  {% if f.stats %}{{ stats_toggle(f) }}{% endif %}
+</article>
+{% endmacro %}
+
+{% macro editable_fixture(f) %}
+<article class="fx">
+  <div class="fx__top"><span class="fx__ko">{{ f.time }}</span><span class="tag {{ f.tag.cls }}">{{ f.tag.text }}</span></div>
+  <div class="fx__body">
+    {% for side in (f.home, f.away) %}
+    <div class="team">
+      {{ team_link(side) }}
+      <span class="cap">
+        <button type="button" class="step" data-target="{{ side.input_name }}" data-d="-1" aria-label="Decrease {{ side.name }} score">&minus;</button>
+        <input class="num" type="number" inputmode="numeric" min="0" max="19"
+               name="{{ side.input_name }}" id="{{ side.input_name }}"
+               data-original="{{ side.pred if side.pred is not none else '' }}"
+               value="{{ side.pred if side.pred is not none else '' }}" placeholder="&ndash;"
+               aria-label="{{ side.name }} predicted score">
+        <button type="button" class="step" data-target="{{ side.input_name }}" data-d="1" aria-label="Increase {{ side.name }} score">+</button>
+      </span>
+    </div>
+    {% endfor %}
+  </div>
+  {% if f.stats %}{{ stats_toggle(f) }}{% endif %}
+</article>
+{% endmacro %}
+
+{% macro fixture_list(fixtures, editable) %}
+{% for f in fixtures %}
+  {% if f.show_day %}<div class="dayhead">{{ f.day_label }}</div>{% endif %}
+  {% if editable and not f.locked %}
+    {{ editable_fixture(f) }}
+  {% else %}
+    {{ readonly_fixture(f) }}
+  {% endif %}
+{% endfor %}
+{% endmacro %}

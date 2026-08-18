@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% from "_macros.html" import fixture_list %}
+{% block body %}
+{% set active = 'predict' %}
+{% include "_topbar.html" %}
+
+<form method="post" action="{{ url_for('predict_post') }}">
+  <input type="hidden" name="matchday" value="{{ matchday }}">
+  <div class="page page--save">
+    <h2 class="section-h">Fixtures</h2>
+    <p class="section-sub">
+      {% if open_n == 0 %}Matchday {{ matchday }} is closed.
+      {% else %}{{ done_n }} of {{ open_n }} open fixtures predicted.{% endif %}
+    </p>
+
+    <div class="mdstrip">
+      {% for s in strip %}
+      <a class="mdpill" href="{{ url_for('predict', matchday=s.md) }}" aria-pressed="{{ 'true' if s.md == matchday else 'false' }}">
+        Matchday {{ s.md }}<small>{{ 'Closed' if s.open == 0 else s.open ~ ' open' }}</small>
+      </a>
+      {% endfor %}
+    </div>
+
+    <div class="key">
+      <div class="key__cell"><div class="key__n key__n--3">3</div><span class="key__t">Exact score</span></div>
+      <div class="key__cell"><div class="key__n key__n--1">1</div><span class="key__t">Right result</span></div>
+      <div class="key__cell"><div class="key__n key__n--0">0</div><span class="key__t">Wrong result</span></div>
+    </div>
+
+    <div id="predictList">
+      {{ fixture_list(fixtures, true) }}
+    </div>
+  </div>
+
+  <div class="savebar" id="saveBar">
+    <button class="btn" type="submit">Save predictions <span class="savebar__count" id="saveCount">0</span></button>
+  </div>
+</form>
+
+{% include "_nav.html" %}
+{% endblock %}

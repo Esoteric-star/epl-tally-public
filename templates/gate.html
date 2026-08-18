@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="gate">
+  <div class="gate__bar"><span class="brand"><span class="brand__tag">PL</span><span class="brand__word">Predictor</span></span></div>
+  <div class="gate__body">
+    <div>
+      <h1 class="gate__h">Enter the passcode</h1>
+      <p class="gate__p">One code for everyone. We'll remember this phone for 30 days.</p>
+    </div>
+    <form method="post" action="{{ url_for('auth') }}">
+      <label class="field">
+        <span class="field__label">Passcode</span>
+        <input class="field__input" name="passcode" type="text" inputmode="text"
+               autocomplete="off" autocapitalize="characters" spellcheck="false"
+               placeholder="••••••" required autofocus>
+      </label>
+      <button class="btn" type="submit" style="margin-top:18px">Continue</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

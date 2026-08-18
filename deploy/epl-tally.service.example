@@ -1,0 +1,19 @@
+[Unit]
+Description=EPL Tally predictor (Flask/gunicorn, behind a reverse proxy)
+After=network.target
+
+[Service]
+Type=simple
+User=epl
+WorkingDirectory=/opt/epl-tally
+EnvironmentFile=/opt/epl-tally/.env
+ExecStart=/opt/epl-tally/venv/bin/gunicorn -w 3 -b 127.0.0.1:8000 app:app
+Restart=on-failure
+RestartSec=5
+
+# Hardening (safe defaults for a dedicated service user)
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,5 @@
+# EPL Tally - fetch fixtures/results twice daily at 08:00 and 20:00 UTC.
+# Not installed automatically. See README.md / install instructions for how to add these.
+CRON_TZ=UTC
+0 8  * * * cd /opt/epl-tally && venv/bin/python fetch_matches.py >> fetch.log 2>&1
+0 20 * * * cd /opt/epl-tally && venv/bin/python fetch_matches.py >> fetch.log 2>&1

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% from "_macros.html" import badge, comp_badge, form_pill %}
+{% block title %}{{ team.name }} · Predictor{% endblock %}
+{% block body %}
+{% include "_topbar.html" %}
+
+<div class="page">
+  <a class="backlink" id="teamBack" href="{{ url_for('predict') }}"><svg><use href="#i-back"/></svg>Back</a>
+
+  <div class="teamhead">
+    <span class="teamhead__badge">{{ badge(team) }}</span>
+    <h2 class="section-h">{{ team.name }}</h2>
+  </div>
+
+  <div class="formstrip formstrip--lg">
+    {% for m in form|reverse %}{{ form_pill(m) }}{% endfor %}
+    {% if not form %}<span class="statsempty">No results on record yet</span>{% endif %}
+  </div>
+
+  <div class="dayhead">Recent results</div>
+  {% if form %}
+  <div class="teamlist">
+    {% for m in form %}
+    <div class="teamrow">
+      {% if m.opponent_view %}
+      <a class="teamrow__opp" href="{{ url_for('team_page', code=m.opponent_view.code|lower) }}">
+        {{ badge(m.opponent_view) }}
+        <span class="teamrow__name">{{ m.opponent_view.name }}</span>
+      </a>
+      {% else %}
+      <span class="teamrow__opp">
+        <span class="teamrow__name">{{ m.opponent }}</span>
+      </span>
+      {% endif %}
+      <span class="teamrow__meta">{{ 'H' if m.is_home else 'A' }} · {{ m.date_short }} · {{ m.season }}</span>
+      <span class="teamrow__comp">{{ comp_badge(m.comp) }}</span>
+      <i class="formpill formpill--{{ m.result|lower }}">{{ m.result }}</i>
+      <span class="teamrow__score">{{ m.team_score }}&ndash;{{ m.opp_score }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty"><b>No results yet</b>Nothing finished for {{ team.name }} on record.</div>
+  {% endif %}
+
+  <div class="dayhead">Upcoming fixtures</div>
+  {% if upcoming %}
+  <div class="teamlist">
+    {% for m in upcoming %}
+    <div class="teamrow">
+      {% if m.opponent_view %}
+      <a class="teamrow__opp" href="{{ url_for('team_page', code=m.opponent_view.code|lower) }}">
+        {{ badge(m.opponent_view) }}
+        <span class="teamrow__name">{{ m.opponent_view.name }}</span>
+      </a>
+      {% else %}
+      <span class="teamrow__opp">
+        <span class="teamrow__name">{{ m.opponent }}</span>
+      </span>
+      {% endif %}
+      <span class="teamrow__meta">{{ 'H' if m.is_home else 'A' }}</span>
+      <span class="teamrow__score">{{ m.ko_display }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty"><b>Nothing scheduled</b>No upcoming fixtures on record for {{ team.name }}.</div>
+  {% endif %}
+</div>
+
+{% include "_nav.html" %}
+{% endblock %}

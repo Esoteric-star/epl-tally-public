@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block body %}
+{% set active = 'table' %}
+{% include "_topbar.html" %}
+
+<div class="page">
+  <div class="lead">
+    <p class="lead__eyebrow">Matchday {{ current_md }} · {{ (live ~ ' live now') if live else (open_count ~ ' still to play') }}</p>
+    <h2 class="lead__h">{{ "It's all square at the top" if gap == 0 and runner_up else (leader.name ~ ' leads' if leader else 'No predictions yet') }}</h2>
+    <p class="lead__p">
+      {% if leader and runner_up %}
+        {% if gap == 0 %}
+          {{ leader.name }} and {{ runner_up.name }} are level on {{ leader.points }} points.
+        {% else %}
+          {{ gap }} point{{ '' if gap == 1 else 's' }} ahead of {{ runner_up.name }} after {{ leader.played }} matches.
+        {% endif %}
+      {% endif %}
+    </p>
+  </div>
+
+  <div class="lb">
+    <div class="lb__head">
+      <span style="width:20px;text-align:center">#</span>
+      <span style="flex:1">Player</span>
+      <span style="width:44px;text-align:center">Exact</span>
+      <span style="width:48px;text-align:center">Pts</span>
+    </div>
+    {% for p in board %}
+    <div class="lb__row {{ 'lb__row--top' if p.position == 1 else '' }} {{ 'lb__row--me' if p.name == me else '' }}">
+      <span class="lb__pos">{{ p.position }}</span>
+      <span class="lb__name">
+        <b>{{ p.name }}</b>{% if p.name == me %}<span class="lb__you">YOU</span>{% endif %}
+        <span class="lb__sub">{{ p.played }} match{{ '' if p.played == 1 else 'es' }}</span>
+        <span class="form">
+          {% for pt in p.form %}
+          <i class="{{ 'p3' if pt == 3 else 'p1' if pt == 1 else '' }}">{{ pt if pt is not none else '–' }}</i>
+          {% endfor %}
+        </span>
+      </span>
+      <span class="lb__exact">{{ p.exact }}</span>
+      <span class="lb__pts">{{ p.points }}</span>
+    </div>
+    {% endfor %}
+  </div>
+
+  <p class="note"><svg><use href="#i-info"/></svg> Level on points? The most exact scorelines wins.</p>
+
+  <div class="key" style="margin-top:14px">
+    <div class="key__cell"><div class="key__n key__n--3">3</div><span class="key__t">Exact score</span></div>
+    <div class="key__cell"><div class="key__n key__n--1">1</div><span class="key__t">Right result</span></div>
+    <div class="key__cell"><div class="key__n key__n--0">0</div><span class="key__t">Wrong result</span></div>
+  </div>
+</div>
+
+{% include "_nav.html" %}
+{% endblock %}
