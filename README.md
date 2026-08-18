@@ -10,6 +10,20 @@ TLS, and hardening. Runs on a single Hetzner VPS behind nginx.
 
 ---
 
+## Screenshots
+
+| Fixtures | Table | My picks |
+|---|---|---|
+| ![Fixtures screen: a matchday's games with lock states and per-match scoring pills](docs/screenshots/predictions.png) | ![Table screen: leaderboard showing the exact-scoreline tiebreak and each player's recent-form chips](docs/screenshots/leaderboard.png) | ![My picks screen: one player's predictions for a matchday against final scores](docs/screenshots/my-predictions.png) |
+
+Captured in `DEMO_MODE` (fictional players, fictional predictions) with
+`DEMO_SHOW_CRESTS=true` so the crest art shows in the shot — see
+[`seed_demo.py`](seed_demo.py) and the demo mode instructions below. The
+wordmark, avatars, and competition badges stay as placeholders even with
+crests switched on.
+
+---
+
 ## Demo mode
 
 `DEMO_MODE` skips the passcode gate and swaps in placeholder branding, for a
