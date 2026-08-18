@@ -161,9 +161,9 @@ Worth knowing generally: sshd's strict-mode failures are logged clearly but neve
 surfaced to the client, so the client-side symptom tells you nothing. Read the
 server log first.
 
-**Firewall.** UFW default-deny inbound, allow 22/80/443 only. gunicorn binds to a
-Unix socket rather than a TCP port, so it is not reachable from outside the box
-at all.
+**Firewall.** UFW default-deny inbound, allow 22/80/443 only. gunicorn binds to
+127.0.0.1:8000 — TCP, but loopback-only — so it is not reachable from outside
+the box at all.
 
 **Secrets.** `.env`, `chmod 600`, gitignored from the first commit. Nothing
 sensitive in the repo, nothing sensitive rendered to the client.

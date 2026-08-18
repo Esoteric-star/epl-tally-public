@@ -43,7 +43,7 @@ hidden in the UI.
                      └──────────────────────┘
                                                    │
    Browser ──▶ nginx (TLS) ──▶ gunicorn ──▶ Flask ─┘
-                 :443            unix socket   Jinja2
+                 :443          127.0.0.1:8000  Jinja2
 ```
 
 **Stack:** Python 3 · Flask · Jinja2 · gunicorn · SQLite · nginx · certbot ·
@@ -167,7 +167,7 @@ private app, and one fewer credential store to get wrong.
 ## Running locally
 
 ```bash
-git clone https://github.com/Esoteric-star/epl-tally.git
+git clone https://github.com/Esoteric-star/epl-tally-public.git
 cd epl-tally
 python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
@@ -186,9 +186,10 @@ Free API tokens are available from football-data.org.
 
 ## Deployment
 
-Production runs under systemd with gunicorn bound to a Unix socket, proxied by
-nginx. Example unit and server-block files are in `deploy/` as `.example`
-templates — populate the domain and paths for your own environment.
+Production runs under systemd with gunicorn bound to `127.0.0.1:8000` (TCP,
+loopback only), proxied by nginx. Example unit and server-block files are in
+`deploy/` as `.example` templates — populate the domain and paths for your own
+environment.
 
 ```bash
 systemctl status epl-tally
