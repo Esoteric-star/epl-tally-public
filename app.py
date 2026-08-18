@@ -14,11 +14,17 @@ from settle import score
 from stats import head_to_head, team_form, team_upcoming
 from teams import CODE_TO_NAME, comp_view, roster_team_view, team_view
 
+DEMO_MODE = os.environ.get("DEMO_MODE", "").lower() in ("1", "true", "yes")
+# Independent of DEMO_MODE's other branding swaps -- lets a demo run show
+# real club crests (e.g. for a screenshot that wants them) while keeping
+# the wordmark, avatars, and competition badges as placeholders.
+DEMO_SHOW_CRESTS = os.environ.get("DEMO_SHOW_CRESTS", "").lower() in ("1", "true", "yes")
+
 APP_PASSCODE = os.environ["APP_PASSCODE"]
 FLASK_SECRET_KEY = os.environ["FLASK_SECRET_KEY"]
 
 LONDON = ZoneInfo("Europe/London")
-PLAYER_NAMES = ("Alex", "Sam")
+PLAYER_NAMES = ("Alex", "Sam", "Jordan") if DEMO_MODE else ("Alex", "Sam")
 LOCK_THRESHOLD = 5
 LOCK_MINUTES = 15
 
@@ -30,6 +36,8 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
 app.jinja_env.globals["avatar_file"] = avatar_file
+app.jinja_env.globals["DEMO_MODE"] = DEMO_MODE
+app.jinja_env.globals["DEMO_SHOW_CRESTS"] = DEMO_SHOW_CRESTS
 
 
 def seed_players():
@@ -49,7 +57,7 @@ seed_players()
 def player_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
-        if not session.get("authed"):
+        if not DEMO_MODE and not session.get("authed"):
             return redirect(url_for("gate"))
         if not session.get("player_id"):
             return redirect(url_for("who"))
@@ -61,7 +69,7 @@ def player_required(fn):
 def authed_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
-        if not session.get("authed"):
+        if not DEMO_MODE and not session.get("authed"):
             return redirect(url_for("gate"))
         return fn(*args, **kwargs)
 
@@ -305,7 +313,7 @@ def last5_form():
 # ------------------------------------------------------------------
 @app.route("/")
 def gate():
-    if session.get("authed"):
+    if DEMO_MODE or session.get("authed"):
         if session.get("player_id"):
             return redirect(url_for("predict"))
         return redirect(url_for("who"))

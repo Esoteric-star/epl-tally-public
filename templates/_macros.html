@@ -1,5 +1,11 @@
+{% macro wordmark() -%}
+<span class="brand"><span class="brand__tag">{{ 'AR' if DEMO_MODE else 'PL' }}</span><span class="brand__word">{{ 'Always Right' if DEMO_MODE else 'Predictor' }}</span></span>
+{%- endmacro %}
+
 {% macro player_avatar(name) -%}
-{% if name and avatar_file(name) %}
+{% if DEMO_MODE %}
+<span class="avatar avatar--demo">{{ (name[:1] if name else '-')|upper }}</span>
+{% elif name and avatar_file(name) %}
 <img class="avatar" src="{{ url_for('static', filename='avatars/' ~ avatar_file(name)) }}" alt="{{ name }}">
 {% else %}
 <span class="avatar">{{ (name[:2] if name else '--')|upper }}</span>
@@ -7,7 +13,7 @@
 {%- endmacro %}
 
 {% macro badge(side) -%}
-{% if side.badge_file %}
+{% if side.badge_file and (not DEMO_MODE or DEMO_SHOW_CRESTS) %}
 <img class="badge" src="{{ url_for('static', filename='badges/' ~ side.badge_file) }}" alt="{{ side.name }}">
 {% else %}
 <span class="badge" style="color:{{ side.colour }};background:{{ side.colour }}18">{{ side.code }}</span>
@@ -22,10 +28,12 @@
 {%- endmacro %}
 
 {% macro comp_badge(comp) -%}
+{% if not DEMO_MODE %}
 {% if comp.badge_file %}
 <img class="compbadge" src="{{ url_for('static', filename='comp_badges/' ~ comp.badge_file) }}" alt="{{ comp.name }}" title="{{ comp.name }}">
 {% else %}
 <span class="compbadge compbadge--text" title="{{ comp.name }}">{{ comp.code }}</span>
+{% endif %}
 {% endif %}
 {%- endmacro %}
 

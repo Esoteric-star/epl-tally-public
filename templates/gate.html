@@ -1,7 +1,8 @@
 {% extends "base.html" %}
+{% from "_macros.html" import wordmark %}
 {% block body %}
 <div class="gate">
-  <div class="gate__bar"><span class="brand"><span class="brand__tag">PL</span><span class="brand__word">Predictor</span></span></div>
+  <div class="gate__bar">{{ wordmark() }}</div>
   <div class="gate__body">
     <div>
       <h1 class="gate__h">Enter the passcode</h1>

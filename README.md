@@ -10,6 +10,22 @@ TLS, and hardening. Runs on a single Hetzner VPS behind nginx.
 
 ---
 
+## Demo mode
+
+`DEMO_MODE` skips the passcode gate and swaps in placeholder branding, for a
+safe look around without touching real data:
+
+```bash
+python3 seed_demo.py    # builds demo.db from scratch; never touches epl.db
+DEMO_MODE=1 DATABASE_PATH=demo.db DEMO_SHOW_CRESTS=1 flask run
+```
+
+`DATABASE_PATH=demo.db` matters: without it `DEMO_MODE` would drop the
+passcode gate in front of the real database. Drop `DEMO_SHOW_CRESTS` to see
+the text-code fallback instead of crest art.
+
+---
+
 ## Scoring rules
 
 | Outcome | Points |

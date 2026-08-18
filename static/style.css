@@ -118,6 +118,7 @@ a{color:inherit}
   background:var(--dark);color:#fff;
   object-fit:cover;
 }
+.avatar--demo{background:var(--yellow);color:var(--dark)}
 
 /* ============================================================
    CHROME
