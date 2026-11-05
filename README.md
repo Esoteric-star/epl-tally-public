@@ -101,7 +101,7 @@ SSH hardened: ed25519 key authentication only, password auth disabled.
 Running locally
 bash
 git clone https://github.com/Esoteric-star/epl-tally-public.git
-cd epl-tally
+cd epl-tally-public
 python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 
