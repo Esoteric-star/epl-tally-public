@@ -83,7 +83,7 @@ nginx over Caddy. Caddy would have meant fewer moving parts for automatic TLS, a
 
 SQLite over Postgres. Two users, a few thousand rows, read-heavy. Postgres would be operational overhead for no real benefit. The schema is portable enough if that ever needs to change.
 
-Settlement is idempotent. settle.py can be re-run over any matchday without double-awarding points. Scoring is derived from stored results rather than incremented in place, so a bad run gets fixed by running it again, not by going in and manually repairing the points table.
+Settlement is unchanged. settle.py can be re-run over any matchday without double-awarding points. Scoring is derived from stored results rather than incremented in place, so a bad run gets fixed by running it again, not by going in and manually repairing the points table.
 
 Security
 
